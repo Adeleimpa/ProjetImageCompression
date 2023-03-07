@@ -11,26 +11,28 @@ const int resolution = 16;
 const int nb_img_db = 10001; //nombre d'images utilisées de la base de données, max 10001
 
 //Calcule la moyenne d'un rectangle débutant en (ideb,j_deb) et de taille larg_traitee x haut_traitee
-OCTET moy(OCTET* img, int larg, int haut, int i_deb, int j_deb, int larg_traitee, int haut_traitee){
-    int taille_img = larg_traitee * haut_traitee;
+OCTET moy(OCTET* img, int larg, int haut, int i_deb, int j_deb, int larg_traitee, int haut_traitee, int pas){
+    int taille_img = 0;//larg_traitee * haut_traitee;
     double moyenne = 0.;
 
-    for(size_t i=i_deb; i<(i_deb+haut_traitee); i++){
-        for(size_t j = j_deb; j<(j_deb+larg_traitee); j++){
-            moyenne += img[i*larg + j];            
+    for(size_t i=i_deb; i<(i_deb+haut_traitee); i+=pas){
+        for(size_t j = j_deb; j<(j_deb+larg_traitee); j+=pas){
+            moyenne += img[i*larg + j];  
+            taille_img++;          
         }
     }
 
     return moyenne/(double)taille_img;
 }
 
-double var(OCTET* img, int larg, int haut, int i_deb, int j_deb, int larg_traitee, int haut_traitee, OCTET moyenne){
-    int taille_img = larg_traitee * haut_traitee;
+double var(OCTET* img, int larg, int haut, int i_deb, int j_deb, int larg_traitee, int haut_traitee, OCTET moyenne, int pas){
+    int taille_img=0;// = larg_traitee * haut_traitee;
     double variance = 0.;
     
-    for(size_t i=i_deb; i<(i_deb+haut_traitee); i++){
-        for(size_t j = j_deb; j<(j_deb+larg_traitee); j++){
-            variance += abs(img[i*larg + j] - moyenne);            
+    for(size_t i=i_deb; i<(i_deb+haut_traitee); i+=pas){
+        for(size_t j = j_deb; j<(j_deb+larg_traitee); j+=pas){
+            variance += abs(img[i*larg + j] - moyenne); 
+            taille_img++;
         }
     }
 
@@ -126,8 +128,8 @@ int main(int argc, char* argv[]){
         strcpy(name_image_db, nom.c_str());
         lire_image_pgm(name_image_db, image_db, taille_img_db);
 
-        Moyennes[i] = moy(image_db, nW, nH, 0, 0, nW, nH);
-        Variances[i] = var(image_db, nW, nH, 0, 0, nW, nH, Moyennes[i]);
+        Moyennes[i] = moy(image_db, nW, nH, 0, 0, nW, nH, nW/resolution);
+        Variances[i] = var(image_db, nW, nH, 0, 0, nW, nH, Moyennes[i], nW/resolution);
     }
 
     OCTET *ImgIn, *ImgOut;
@@ -143,8 +145,8 @@ int main(int argc, char* argv[]){
     //calcul de la moyenne puis remplacement par l'une des images dont la moyenne est la plus proche
     for(size_t i = 0; i<nH; i+=resolution){
         for(size_t j = 0; j<nW; j+=resolution){
-            int moy_bloc = moy(ImgIn, nW, nH, i, j, resolution, resolution);            
-            double var_bloc = var(ImgIn, nW, nH, i, j, resolution, resolution, moy_bloc);
+            int moy_bloc = moy(ImgIn, nW, nH, i, j, resolution, resolution, 1);            
+            double var_bloc = var(ImgIn, nW, nH, i, j, resolution, resolution, moy_bloc, 1);
 
             remplacer_bloc(ImgOut, image_plus_proche(moy_bloc, Moyennes, var_bloc, Variances, nb_img_db), i, j, nW, resolution);
         }
