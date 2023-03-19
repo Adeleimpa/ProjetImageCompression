@@ -10,6 +10,23 @@
 const int resolution = 16;
 const int nb_img_db = 10001; //nombre d'images utilisées de la base de données, max 10001
 
+double PSNR(OCTET *ImgIn, OCTET *ImgOut, int nH, int nW){
+  double psnr;
+
+  double sum;
+  for(int i = 0; i < nH; i++) {
+      for (int j = 0; j < nW; j++) {
+          sum += pow(ImgOut[i * nW + j] - ImgIn[i * nW + j],2);
+      }
+  }
+  double eqm;
+  eqm = sum / (nH * nW);
+
+  psnr = 10 * log10(pow(255,2)/eqm);
+
+  return psnr;
+}
+
 //Calcule la moyenne d'un rectangle débutant en (ideb,j_deb) et de taille larg_traitee x haut_traitee
 OCTET moy(OCTET* img, int larg, int haut, int i_deb, int j_deb, int larg_traitee, int haut_traitee, int pas){
     int taille_img = 0;//larg_traitee * haut_traitee;
