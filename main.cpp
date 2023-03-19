@@ -10,6 +10,24 @@
 const int resolution = 16;
 const int nb_img_db = 10001; //nombre d'images utilisées de la base de données, max 10001
 
+std::vector<double> computePsnr(OCTET *image_db, OCTET *ImgIn, int nH, int nW){
+
+    std::vector<double> psnrs;
+
+// TODO parcourt chaque bloc  de la grande image et calcule le psnr entre la current imagette
+// renvoie la liste des PNSRs pour cette imagette
+
+    for(size_t i = 0; i<nH; i+=resolution){
+        for(size_t j = 0; j<nW; j+=resolution){
+           // TODO 
+            // call PSNR for each bloc
+        }
+    }
+
+    return psnrs;
+
+}
+
 double PSNR(OCTET *ImgIn, OCTET *ImgOut, int nH, int nW){
   double psnr;
 
@@ -117,8 +135,11 @@ int main(int argc, char* argv[]){
 
 	char name_main_image[250], name_image_out[250], name_image_db[250];
 	int nH, nW, nTaille;
+    int nH_db, nW_db;
     OCTET Moyennes[nb_img_db];
     double Variances[nb_img_db];
+
+    std::vector<std::vector<double> > PSNRs;
 
 	if (argc != 3) {
         printf(" wrong usage \n");
@@ -132,22 +153,10 @@ int main(int argc, char* argv[]){
 
     OCTET* image_db;
     std::string nom;
-    lire_nb_lignes_colonnes_image_pgm(name_image_db, &nH, &nW);
-    allocation_tableau(image_db, OCTET, nH*nW);
+    lire_nb_lignes_colonnes_image_pgm(name_image_db, &nH_db, &nW_db);
+    allocation_tableau(image_db, OCTET, nH_db*nW_db);
 
-    int taille_img_db = nH*nW;
-
-    //Pour chaque image de la base de données : copie dans le tableau d'octets, puis calcul de la moyenne
-    for (int i = 0; i < nb_img_db; ++i)
-    {
-        //Base de données : dossier "img" avec des images de "0.pgm" à "10000.pgm"
-        nom = "img/" + std::to_string(i) + ".pgm";
-        strcpy(name_image_db, nom.c_str());
-        lire_image_pgm(name_image_db, image_db, taille_img_db);
-
-        Moyennes[i] = moy(image_db, nW, nH, 0, 0, nW, nH, nW/resolution);
-        Variances[i] = var(image_db, nW, nH, 0, 0, nW, nH, Moyennes[i], nW/resolution);
-    }
+    int taille_img_db = nH_db*nW_db;
 
     OCTET *ImgIn, *ImgOut;
 
@@ -157,6 +166,21 @@ int main(int argc, char* argv[]){
     allocation_tableau(ImgIn, OCTET, nTaille);
     allocation_tableau(ImgOut, OCTET, nTaille);
     lire_image_pgm(name_main_image, ImgIn, nTaille);
+
+
+    //Pour chaque image de la base de données : copie dans le tableau d'octets, puis calcul de la moyenne
+    for (int i = 0; i < nb_img_db; ++i)
+    {
+        //Base de données : dossier "img" avec des images de "0.pgm" à "10000.pgm"
+        nom = "img/" + std::to_string(i) + ".pgm";
+        strcpy(name_image_db, nom.c_str());
+        lire_image_pgm(name_image_db, image_db, taille_img_db);
+
+        Moyennes[i] = moy(image_db, nW_db, nH_db, 0, 0, nW_db, nH_db, nW_db/resolution);
+        Variances[i] = var(image_db, nW_db, nH_db, 0, 0, nW_db, nH_db, Moyennes[i], nW_db/resolution);
+
+        //PSNRs.push_back(computePsnr(image_db, ImgIn, nH, nW)); // TODO !!
+    }
 
     //Pour chaque bloc de côté resolution :
     //calcul de la moyenne puis remplacement par l'une des images dont la moyenne est la plus proche
