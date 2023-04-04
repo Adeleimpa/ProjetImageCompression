@@ -226,10 +226,14 @@ int main(int argc, char* argv[]){
 
         std::cout << "P" << std::endl;
 
-        double seuil_erreur = 1000.;  //TODO : demander valeur à l'utilisateur
+        double seuil_erreur;
         double err;
         double err_min;
         size_t idx_err_min;
+
+        std::cout<<"Entrez le seuil du PSNR : ";
+        std::cin>>seuil_erreur;
+        std::cout<<std::endl;
 
         for(size_t i = 0; i<nH; i+=resolution){
             for(size_t j = 0; j<nW; j+=resolution){
