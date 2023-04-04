@@ -226,7 +226,7 @@ int main(int argc, char* argv[]){
 
         std::cout << "P" << std::endl;
 
-        double seuil_erreur;
+        double seuil_erreur = 1000.;  //TODO : demander valeur à l'utilisateur
         double err;
         double err_min;
         size_t idx_err_min;
