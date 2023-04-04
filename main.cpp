@@ -226,6 +226,7 @@ int main(int argc, char* argv[]){
 
         std::cout << "P" << std::endl;
 
+        double seuil_erreur;
         double err;
         double err_min;
         size_t idx_err_min;
@@ -233,11 +234,19 @@ int main(int argc, char* argv[]){
         for(size_t i = 0; i<nH; i+=resolution){
             for(size_t j = 0; j<nW; j+=resolution){
                 err_min = FLT_MAX;
+                size_t offset = rand()%nb_img_db;
+
                 for (size_t idx = 0; idx < nb_img_db; idx++)
                 {
-                    err = eqm(ImgIn, idx, i, j, nW, resolution);
-                    if(err<err_min){
-                        idx_err_min = idx;
+                    size_t idx_offset = (idx + offset)%nb_img_db;
+                    err = eqm(ImgIn, idx_offset, i, j, nW, resolution);
+                    if(err<seuil_erreur){
+                        idx_err_min = idx_offset;
+                        err_min = err;
+                        break;
+                    }
+                    else if(err<err_min){
+                        idx_err_min = idx_offset;
                         err_min = err;
                     }
                     //std::cout<<"Erreur bloc "<<i<<" "<<j<<" et img "<<idx<<"= "<<err<<"\n";
