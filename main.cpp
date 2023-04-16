@@ -6,8 +6,8 @@
 #include <climits>
 #include <cfloat>
 #include <time.h>
-//#include "imgui-master/imgui*.h" // ERROR
-//#include "imgui-master/imgui*.cpp" // ERROR
+//#include "imgui-master/imgui*.h"
+//#include "imgui-master/imgui*.cpp"
 
 int resolution;
 const int nb_img_db = 10001; //nombre d'images utilisées de la base de données, max 10001
