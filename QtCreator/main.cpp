@@ -14,7 +14,7 @@
 int resolution;
 const int nb_img_db = 10001; //nombre d'images utilisées de la base de données, max 10001
 
-MainWindow w;
+//MainWindow w;
 
 double eqm(OCTET*ImgIn, size_t idx, int i, int j, int larg, int resolution){
     double err_quadra = 0.;
@@ -127,10 +127,10 @@ void remplacer_bloc(OCTET*ImgOut, size_t idx, int i, int j, int larg, int resolu
 int main(int argc, char* argv[]){
 
     QApplication a(argc, argv);
+    MainWindow w;
     w.show();
 
     return a.exec();
-    //return 1;
 }
 
 void start(){
@@ -154,7 +154,7 @@ void start(){
     sscanf(argv[3], "%s", name_image_out);
     sscanf(argv[4], "%d", &resolution);*/
 
-
+    // TODO Debug (how to access w without using instance variable?)
     // récupérer paramètres de l'interface
     strlcpy(name_main_image, w.input_path.toStdString().c_str(), sizeof(name_main_image));
     strlcpy(name_image_out, w.output_path.toStdString().c_str(), sizeof(name_image_out));
