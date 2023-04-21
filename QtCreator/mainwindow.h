@@ -20,8 +20,9 @@ public:
     QString resolution;
     QString methode;
 
+
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 
 private:
     Ui::MosaiqueMaker *ui;
