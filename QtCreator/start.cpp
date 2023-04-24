@@ -269,6 +269,70 @@ void start::letsgo(){
 
     }
     // --------------------------------------------------------------------------------------------
+    else if(method_key[0] == 'H'){ // Hybride
+        char name_image_db[250];
+        sscanf("img/0.pgm", "%s", name_image_db);
+
+        OCTET* image_db;
+        std::string nom;
+
+        int nH_db, nW_db;
+        lire_nb_lignes_colonnes_image_pgm(name_image_db, &nH_db, &nW_db);
+        allocation_tableau(image_db, OCTET, nH_db*nW_db);
+
+        int taille_img_db = nH_db*nW_db;
+
+        for (int i = 0; i < nb_img_db; ++i){
+            nom = "img/" + std::to_string(i) + ".pgm";
+            strcpy(name_image_db, nom.c_str());
+            lire_image_pgm(name_image_db, image_db, taille_img_db);
+
+            Moyennes[i] = moy(image_db, nW_db, nH_db, 0, 0, nW_db, nH_db, nW_db/resolution);
+            Variances[i] = var(image_db, nW_db, nH_db, 0, 0, nW_db, nH_db, Moyennes[i], nW_db/resolution);
+        }
+
+        size_t nb_candidats = 10;
+        int Candidats[nb_candidats][2];
+        double CandidatsPSNR[nb_candidats];
+
+        for(size_t i = 0; i<nH; i+=resolution){
+            for(size_t j = 0; j<nW; j+=resolution){
+                int moy_bloc = moy(ImgIn, nW, nH, i, j, resolution, resolution, 1);            
+                double var_bloc = var(ImgIn, nW, nH, i, j, resolution, resolution, moy_bloc, 1);
+
+                for(int idx = 0; idx<nb_candidats; idx++){
+                    Candidats[idx][0] = idx;
+                    Candidats[idx][1] = abs(moy_bloc-Moyennes[idx])+abs((int)(var_bloc-Variances[idx]));
+                }
+
+                for(int idx = 0; idx<nb_img_db; idx++){
+                    bool b = 0;
+                    int k = 0;
+                    int ecart = abs(moy_bloc-Moyennes[idx])+abs((int)(var_bloc-Variances[idx]));
+
+                    while((!b)&&(k<nb_candidats)){
+                        if(ecart < Candidats[k][1]){
+                            Candidats[k][0] = idx;
+                            Candidats[k][1] = ecart;
+                            CandidatsPSNR[k] = eqm(ImgIn, idx, i, j, nW, resolution);
+                            b=1;
+                        }
+                        k++;
+                    }
+                }            
+
+                size_t img_psnr_max = 0;
+                for(int idx = 1; idx<nb_candidats; idx++){
+                    if(CandidatsPSNR[idx] < CandidatsPSNR[img_psnr_max])
+                        img_psnr_max = idx;
+                }
+
+                remplacer_bloc(ImgOut, Candidats[img_psnr_max][0], i, j, nW, resolution);
+            }
+        }
+    free(image_db);
+    }
+    // --------------------------------------------------------------------------------------------
     else{
         printf("first argument is incorrect \n");
     }
