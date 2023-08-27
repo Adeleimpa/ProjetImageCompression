@@ -144,8 +144,9 @@ void start::letsgo(){
         strlcpy(method_key, "M", sizeof(method_key));
     }else if(methode_str == "Moyenne+Variance"){
         strlcpy(method_key, "MV", sizeof(method_key));
+    }else if(methode_str == "Hybride"){
+        strlcpy(method_key, "H", sizeof(method_key));
     }
-
 
     OCTET *ImgIn, *ImgOut;
 
@@ -270,8 +271,11 @@ void start::letsgo(){
     }
     // --------------------------------------------------------------------------------------------
     else if(method_key[0] == 'H'){ // Hybride
+
+        std::cout << "H" << std::endl;
+
         char name_image_db[250];
-        sscanf("img/0.pgm", "%s", name_image_db);
+        sscanf("/Users/adeleimparato/Documents/Montpellier/UM/Semestre2/Projet-Codage-Image/official/ProjetImageCompression/img/0.pgm", "%s", name_image_db);
 
         OCTET* image_db;
         std::string nom;
@@ -283,7 +287,7 @@ void start::letsgo(){
         int taille_img_db = nH_db*nW_db;
 
         for (int i = 0; i < nb_img_db; ++i){
-            nom = "img/" + std::to_string(i) + ".pgm";
+            nom = "/Users/adeleimparato/Documents/Montpellier/UM/Semestre2/Projet-Codage-Image/official/ProjetImageCompression/img/" + std::to_string(i) + ".pgm";
             strcpy(name_image_db, nom.c_str());
             lire_image_pgm(name_image_db, image_db, taille_img_db);
 
